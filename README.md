@@ -9,19 +9,6 @@
 
 ---
 
-## 📋 Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Setup Instructions](#setup-instructions)
-- [API Endpoints](#api-endpoints)
-- [Project Structure](#project-structure)
-- [Usage Examples](#usage-examples)
-- [Contributors](#contributors)
-
----
-
 ## 🎯 Overview
 
 The AI Mock Interview Platform addresses the challenge of limited access to quality interview preparation by providing an AI-driven solution that simulates realistic, domain-specific interviews. The platform offers candidates a chance to practice, analyze, and enhance their communication, confidence, and technical knowledge through real-time interaction with an AI interviewer.
@@ -479,10 +466,8 @@ const feedback = await fetch(`/api/personalized-feedback/${interviewId}`, {
 - **Personalization**: 100% tailored feedback for each candidate
 
 ### Recognition Potential
-- **Patent-Pending**: AI plagiarism detection algorithm
 - **Open Source Contribution**: Separate coding assessment repository
 - **Research Value**: Fair AI evaluation methodology
 - **Social Impact**: Democratizing interview preparation globally
 
 ---
-```
