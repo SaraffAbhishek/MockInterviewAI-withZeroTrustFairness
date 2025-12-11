@@ -1,0 +1,287 @@
+.dashboard-container {
+    display: flex;
+  }
+  
+  .content {
+    margin-left: 250px;
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .user-info {
+    text-align: right;
+    margin-bottom: 20px;
+  }
+  
+  .upload-container,
+  .interview-container,
+  .results-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+  }
+  
+  .btn-primary {
+    background-color: #4e73df;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .btn-primary:hover {
+    background-color: #2e59d9;
+  }
+  
+  .btn-success {
+    background-color: #1cc88a;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .btn-success:hover {
+    background-color: #17a673;
+  }
+  
+  .progress-bar-container {
+    background-color: #e9ecef;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    height: 10px;
+    width: 100%;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: #4e73df;
+    border-radius: 5px;
+  }
+  
+  .question-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fc;
+    border-radius: 10px;
+  }
+  
+  .answer-summary {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #e3e6f0;
+    border-radius: 5px;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  /* Modal content */
+  .modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+  }
+  
+  .modal-content h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .modal-content p {
+    margin-bottom: 20px;
+  }
+  
+  .modal-content ul {
+    margin-bottom: 20px;
+    padding-left: 20px;
+  }
+  
+  .modal-content li {
+    margin-bottom: 10px;
+  }
+  
+  /* Modal buttons */
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .modal-buttons button {
+    padding: 8px 16px;
+  }
+
+  .security-notice {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .security-notice h4 {
+    color: #721c24;
+    margin-top: 0;
+  }
+  
+  .security-notice ul {
+    margin-bottom: 0;
+  }
+  
+  /* Camera Feed */
+  .camera-container {
+    position: relative;
+    width: 160px;
+    height: 120px;
+    margin-bottom: 15px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .camera-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .recording-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .recording-dot {
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    margin-right: 5px;
+    animation: pulse 1.5s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+  
+  /* Warning Message */
+  .warning-message {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  /* Make sure the interview container is properly styled for fullscreen */
+  .dashboard-container.fullscreen {
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+  }
+  
+  /* Prevent text selection during interview */
+  .interview-container {
+    user-select: none;
+  }
+  
+  /* Allow text selection only in the textarea */
+  .interview-container textarea {
+    user-select: text;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  /* Make focus states more visible for keyboard navigation */
+  button:focus, input:focus, select:focus, textarea:focus {
+    outline: 2px solid #4a86e8;
+    outline-offset: 2px;
+  }
+
+  .violations-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.violations-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.violation-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #dc3545;
+}
+
+.violations-detail {
+  border-top: 1px solid #dee2e6;
+  padding-top: 15px;
+}
+
+.violations-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-left: 20px;
+}
+
+.violations-list li {
+  margin-bottom: 8px;
+}
+
+.no-violations {
+  text-align: center;
+  color: #28a745;
+  font-weight: 500;
+  padding: 10px;
+}
