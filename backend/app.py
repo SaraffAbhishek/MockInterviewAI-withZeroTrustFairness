@@ -2625,7 +2625,8 @@ def start_role_interview(current_user_id):
                 'difficulty': difficulty_level,
                 'questions': questions_with_ids
             }), 200
-            
+    
+    except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
