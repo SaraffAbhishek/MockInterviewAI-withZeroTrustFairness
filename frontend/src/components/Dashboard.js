@@ -161,7 +161,7 @@ function Dashboard() {
 
   const handleTimeoutSubmit = async () => {
     if (answerText.trim()) {
-      await submitCurrentAnswer();
+      await handleSubmitAnswer();
     } else {
       alert('Time is up! Moving to next question.');
       if (currentQuestionIndex + 1 < questions.length) {
