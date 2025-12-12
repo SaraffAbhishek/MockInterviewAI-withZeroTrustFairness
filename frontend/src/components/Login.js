@@ -16,6 +16,7 @@ function Login() {
   
   // Input sanitization
   const sanitizeInput = (input) => {
+    if (!input) return '';
     return DOMPurify.sanitize(input.trim());
   };
   
@@ -79,6 +80,13 @@ function Login() {
           return;
         }
         
+        // Check if we have the required data
+        if (!data.access_token || !data.user) {
+          console.error('Missing token or user data in response:', data);
+          alert('Login failed: Invalid response from server');
+          return;
+        }
+        
         // Store sanitized user data
         const sanitizedUser = Object.fromEntries(
           Object.entries(data.user).map(([key, value]) => 
@@ -86,7 +94,8 @@ function Login() {
           )
         );
         
-        localStorage.setItem('token', sanitizeInput(data.token));
+        localStorage.setItem('token', sanitizeInput(data.access_token));
+        localStorage.setItem('refresh_token', sanitizeInput(data.refresh_token));
         localStorage.setItem('user', JSON.stringify(sanitizedUser));
         
         // Navigate to dashboard
@@ -126,6 +135,13 @@ function Login() {
       const data = await response.json();
       
       if (response.ok && !data.require_totp) {
+        // Check if we have the required data
+        if (!data.access_token || !data.user) {
+          console.error('Missing token or user data in response:', data);
+          setErrors({ totpCode: 'Invalid response from server' });
+          return;
+        }
+        
         // Store sanitized user data
         const sanitizedUser = Object.fromEntries(
           Object.entries(data.user).map(([key, value]) => 
@@ -133,7 +149,8 @@ function Login() {
           )
         );
         
-        localStorage.setItem('token', sanitizeInput(data.token));
+        localStorage.setItem('token', sanitizeInput(data.access_token));
+        localStorage.setItem('refresh_token', sanitizeInput(data.refresh_token));
         localStorage.setItem('user', JSON.stringify(sanitizedUser));
         
         // Navigate to dashboard

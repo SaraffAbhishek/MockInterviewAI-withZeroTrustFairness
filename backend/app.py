@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import jwt
 from functools import wraps
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from groq import Groq
 import PyPDF2
 import hashlib
@@ -32,7 +32,17 @@ from evaluation_engine import EvaluationEngine
 from improvement_generator import ImprovementPlanGenerator
 
 app = Flask(__name__)
-CORS(app)
+
+# Configure CORS with explicit settings
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:3000", "http://127.0.0.1:3000"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Device-ID"],
+        "supports_credentials": True,
+        "max_age": 3600
+    }
+})
 
 # Configuration
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -53,7 +63,7 @@ cipher_suite = Fernet(app.config['ENCRYPTION_KEY'])
 
 # Rate limiting configuration
 RATE_LIMITS = {
-    'login': {'requests': 5, 'window': 900},  # 5 per 15 minutes
+    'login': {'requests': 50, 'window': 900},  # 50 per 15 minutes (increased for development)
     'upload_resume': {'requests': 5, 'window': 3600},  # 5 per hour
     'start_interview': {'requests': 10, 'window': 86400},  # 10 per day
     'submit_answer': {'requests': 100, 'window': 3600},  # 100 per hour
@@ -65,6 +75,10 @@ app.config['MAX_CONCURRENT_SESSIONS'] = 3
 
 # Ensure upload directory exists
 Path(app.config['UPLOAD_FOLDER']).mkdir(exist_ok=True)
+
+# Configure SQLite datetime adapter for Python 3.12+
+sqlite3.register_adapter(datetime, lambda val: val.isoformat())
+sqlite3.register_converter("TIMESTAMP", lambda val: datetime.fromisoformat(val.decode()))
 
 # Database initialization
 def init_db():
@@ -558,7 +572,7 @@ def generate_tokens(user_id):
     access_payload = {
         'user_id': user_id,
         'type': 'access',
-        'exp': datetime.utcnow() + timedelta(seconds=app.config['ACCESS_TOKEN_EXPIRY'])
+        'exp': datetime.now(timezone.utc) + timedelta(seconds=app.config['ACCESS_TOKEN_EXPIRY'])
     }
     access_token = jwt.encode(access_payload, app.config['SECRET_KEY'], algorithm='HS256')
     
@@ -567,7 +581,7 @@ def generate_tokens(user_id):
         'user_id': user_id,
         'type': 'refresh',
         'jti': secrets.token_urlsafe(32),  # Unique token ID
-        'exp': datetime.utcnow() + timedelta(seconds=app.config['REFRESH_TOKEN_EXPIRY'])
+        'exp': datetime.now(timezone.utc) + timedelta(seconds=app.config['REFRESH_TOKEN_EXPIRY'])
     }
     refresh_token = jwt.encode(refresh_payload, app.config['SECRET_KEY'], algorithm='HS256')
     
@@ -575,7 +589,7 @@ def generate_tokens(user_id):
     try:
         with sqlite3.connect(app.config['DATABASE']) as conn:
             cursor = conn.cursor()
-            expires_at = datetime.utcnow() + timedelta(seconds=app.config['REFRESH_TOKEN_EXPIRY'])
+            expires_at = datetime.now(timezone.utc) + timedelta(seconds=app.config['REFRESH_TOKEN_EXPIRY'])
             device_id = request.headers.get('X-Device-ID', 'unknown')
             
             cursor.execute('''
@@ -605,7 +619,7 @@ def create_session(user_id):
             cursor.execute('''
                 SELECT COUNT(*) FROM user_sessions
                 WHERE user_id = ? AND active = TRUE AND expires_at > ?
-            ''', (user_id, datetime.utcnow()))
+            ''', (user_id, datetime.now(timezone.utc)))
             
             active_sessions = cursor.fetchone()[0]
             
@@ -625,7 +639,7 @@ def create_session(user_id):
             # Create new session
             session_id = secrets.token_urlsafe(32)
             device_id = request.headers.get('X-Device-ID', 'unknown')
-            expires_at = datetime.utcnow() + timedelta(seconds=app.config['SESSION_EXPIRY'])
+            expires_at = datetime.now(timezone.utc) + timedelta(seconds=app.config['SESSION_EXPIRY'])
             
             cursor.execute('''
                 INSERT INTO user_sessions (user_id, session_id, device_id, ip_address, user_agent, expires_at)
@@ -1262,7 +1276,7 @@ def reset_password_request():
                 # Generate reset token
                 reset_token = jwt.encode({
                     'user_id': user[0],
-                    'exp': datetime.utcnow() + timedelta(hours=1)
+                    'exp': datetime.now(timezone.utc) + timedelta(hours=1)
                 }, app.config['SECRET_KEY'], algorithm="HS256")
                 
                 # In a production environment, send this token via email
@@ -1373,6 +1387,8 @@ def generate_questions(resume_text, job_role):
     - No special characters or escape sequences in strings
     - No newlines within the JSON structure"""
 
+
+    content = None  # Initialize to avoid UnboundLocalError
     try:
         response = groq_client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -1427,7 +1443,10 @@ def generate_questions(resume_text, job_role):
         
     except Exception as e:
         print(f"Error in generate_questions: {str(e)}")
-        print(f"Response content: {content}")
+        if content:
+            print(f"Response content: {content}")
+        else:
+            print("No response content available (error occurred before API response)")
         raise ValueError(f"Failed to generate valid questions: {str(e)}")
 
 
@@ -1649,7 +1668,7 @@ def report_violation(current_user_id):
             new_violations = current_violations + 1
 
             current_summary = interview[2] if interview[2] else ""
-            new_violation_entry = f"{datetime.utcnow().isoformat()} - {violation_message}"
+            new_violation_entry = f"{datetime.now(timezone.utc).isoformat()} - {violation_message}"
             new_summary = f"{current_summary} | {new_violation_entry}" if current_summary else new_violation_entry
 
             cursor.execute('UPDATE interviews SET violations = ?, violation_summary = ? WHERE id = ?', (new_violations, new_summary, interview_id))
@@ -2595,7 +2614,7 @@ def start_role_interview(current_user_id):
                 return jsonify({'error': 'No questions found for this role and difficulty level'}), 404
             
             # Create interview record with timestamp
-            started_at = datetime.utcnow()
+            started_at = datetime.now(timezone.utc)
             cursor.execute('''
                 INSERT INTO interviews (user_id, job_role, resume_path, role_id, difficulty_level, duration_minutes, started_at, total_time_limit_minutes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -3046,4 +3065,4 @@ def get_interview_results(current_user_id, interview_id):
 
         
 if __name__ == '__main__':
-    app.run(debug=True, ssl_context='adhoc')
+    app.run(debug=True, host='127.0.0.1', port=5000)

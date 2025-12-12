@@ -21,6 +21,7 @@ function Signup() {
   
   // Input sanitization
   const sanitizeInput = (input) => {
+    if (!input) return '';
     return DOMPurify.sanitize(input.trim());
   };
   
