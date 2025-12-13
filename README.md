@@ -27,6 +27,66 @@ An intelligent platform that:
 
 ---
 
+## 📸 Screenshots
+
+### Authentication & Security
+<table>
+  <tr>
+    <td width="50%">
+      <img src="images/sign up.png" alt="Sign Up Page" />
+      <p align="center"><b>User Registration</b></p>
+    </td>
+    <td width="50%">
+      <img src="images/two factor.png" alt="Two-Factor Authentication" />
+      <p align="center"><b>Two-Factor Authentication (TOTP)</b></p>
+    </td>
+  </tr>
+</table>
+
+### Interview Setup
+<table>
+  <tr>
+    <td width="50%">
+      <img src="images/main dashboard.png" alt="Main Dashboard" />
+      <p align="center"><b>Main Dashboard</b></p>
+    </td>
+    <td width="50%">
+      <img src="images/interview form filled.png" alt="Interview Form" />
+      <p align="center"><b>Interview Configuration Form</b></p>
+    </td>
+  </tr>
+</table>
+
+### Interview Experience
+<table>
+  <tr>
+    <td width="50%">
+      <img src="images/sample interview question.png" alt="Sample Interview Question" />
+      <p align="center"><b>AI-Generated Interview Question</b></p>
+    </td>
+    <td width="50%">
+      <img src="images/question with voice in and out.png" alt="Voice Interaction" />
+      <p align="center"><b>Voice Input/Output Interface</b></p>
+    </td>
+  </tr>
+</table>
+
+### Advanced Features
+<table>
+  <tr>
+    <td width="50%">
+      <img src="images/voice video and ports features.png" alt="Voice, Video & Ports" />
+      <p align="center"><b>Voice, Video & Port Configuration</b></p>
+    </td>
+    <td width="50%">
+      <img src="images/security rules for interview.png" alt="Security Rules" />
+      <p align="center"><b>Zero Trust Security Rules</b></p>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## ✨ Features
 
 ### Core Features (100% Complete) ✅
